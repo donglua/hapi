@@ -1103,18 +1103,22 @@ describe('codexRemoteLauncher', () => {
         ]));
     });
 
-    it('shows unsupported message when goals feature cannot be enabled', async () => {
+    it('still attempts goal RPC when dynamic goals feature enablement is unsupported', async () => {
         harness.failSetFeatureEnablement = true;
         const { session, sessionEvents } = createSessionStub(['/goal improve benchmark coverage']);
 
         const exitReason = await codexRemoteLauncher(session as never);
 
         expect(exitReason).toBe('exit');
-        expect(harness.goalSetCalls).toHaveLength(0);
+        expect(harness.goalSetCalls).toEqual([{
+            threadId: 'thread-1',
+            objective: 'improve benchmark coverage',
+            status: 'active'
+        }]);
         expect(harness.startTurnParams).toHaveLength(0);
         expect(sessionEvents).toContainEqual({
             type: 'message',
-            message: 'Codex goals are not supported by this Codex runtime. Upgrade Codex or enable features.goals.'
+            message: 'Goal active'
         });
     });
 

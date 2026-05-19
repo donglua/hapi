@@ -2308,8 +2308,7 @@ class CodexRemoteLauncher extends RemoteLauncherBase {
             await appServerClient.setExperimentalFeatureEnablement({ enablement: { goals: true } });
             logger.debug('[Codex] goals feature enabled');
         } catch (error) {
-            supportsGoals = false;
-            logger.debug(`[Codex] failed to enable goals feature: ${errorMessage(error)}`);
+            logger.debug(`[Codex] failed to enable goals feature: ${errorMessage(error)}; will rely on configured feature state`);
         }
         try {
             const response = await appServerClient.listCollaborationModes();
