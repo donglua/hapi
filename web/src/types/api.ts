@@ -1,6 +1,7 @@
 import type {
     DecryptedMessage as ProtocolDecryptedMessage,
     Machine,
+    RunnerState,
     Session,
     SessionSummary,
     SyncEvent as ProtocolSyncEvent,
@@ -33,6 +34,7 @@ export type {
     CodexCollaborationMode,
     PermissionMode,
     Machine,
+    RunnerState,
     Session,
     SessionPatch,
     SessionSummary,
@@ -69,22 +71,6 @@ export type DecryptedMessage = ProtocolDecryptedMessage & {
     status?: MessageStatus
     originalText?: string
     invokedAt?: number | null
-}
-
-export type RunnerState = {
-    status?: string
-    pid?: number
-    httpPort?: number
-    startedAt?: number
-    shutdownRequestedAt?: number
-    shutdownSource?: string
-    lastSpawnError?: {
-        message: string
-        pid?: number
-        exitCode?: number | null
-        signal?: string | null
-        at: number
-    } | null
 }
 
 export type AuthResponse = {

@@ -2,8 +2,11 @@ import {
     AgentStateSchema,
     AttachmentMetadataSchema,
     CodexCollaborationModeSchema,
+    MachineMetadataSchema,
+    MachineSchema,
     MetadataSchema,
     PermissionModeSchema,
+    RunnerStateSchema,
     TodosSchema
 } from '@hapi/protocol/schemas'
 import {
@@ -11,7 +14,7 @@ import {
     LocalResumeTargetResponseSchema,
     ResumableSessionsResponseSchema
 } from '@hapi/protocol'
-import type { CodexCollaborationMode, PermissionMode } from '@hapi/protocol/types'
+import type { CodexCollaborationMode, Machine, MachineMetadata, PermissionMode, RunnerState } from '@hapi/protocol/types'
 import { z } from 'zod'
 import { UsageSchema } from '@/claude/types'
 
@@ -23,7 +26,10 @@ export type {
     ClaudePermissionMode,
     CodexCollaborationMode,
     CodexPermissionMode,
+    Machine,
+    MachineMetadata,
     Metadata,
+    RunnerState,
     Session
 } from '@hapi/protocol/types'
 export type SessionPermissionMode = PermissionMode
@@ -32,65 +38,7 @@ export type SessionModel = string | null
 export type SessionModelReasoningEffort = string | null
 export type SessionEffort = string | null
 
-export { AgentStateSchema, AttachmentMetadataSchema, MetadataSchema }
-
-export const MachineMetadataSchema = z.object({
-    host: z.string(),
-    platform: z.string(),
-    happyCliVersion: z.string(),
-    displayName: z.string().optional(),
-    homeDir: z.string(),
-    happyHomeDir: z.string(),
-    happyLibDir: z.string(),
-    workspaceRoot: z.string().optional(),
-    workspaceRoots: z.array(z.string()).optional()
-}).transform(({ workspaceRoot, workspaceRoots, ...rest }) => {
-    const normalizedWorkspaceRoots = Array.from(new Set(
-        Array.isArray(workspaceRoots)
-            ? workspaceRoots.filter((path): path is string => typeof path === 'string' && path.trim().length > 0)
-            : workspaceRoot
-                ? [workspaceRoot]
-                : []
-    ))
-
-    return {
-        ...rest,
-        workspaceRoots: normalizedWorkspaceRoots.length > 0 ? normalizedWorkspaceRoots : undefined
-    }
-})
-
-export type MachineMetadata = z.infer<typeof MachineMetadataSchema>
-
-export const RunnerStateSchema = z.object({
-    status: z.union([z.enum(['running', 'shutting-down']), z.string()]),
-    pid: z.number().optional(),
-    httpPort: z.number().optional(),
-    startedAt: z.number().optional(),
-    shutdownRequestedAt: z.number().optional(),
-    shutdownSource: z.union([z.enum(['mobile-app', 'cli', 'os-signal', 'unknown']), z.string()]).optional(),
-    lastSpawnError: z.object({
-        message: z.string(),
-        pid: z.number().optional(),
-        exitCode: z.number().nullable().optional(),
-        signal: z.string().nullable().optional(),
-        at: z.number()
-    }).nullable().optional()
-})
-
-export type RunnerState = z.infer<typeof RunnerStateSchema>
-
-export type Machine = {
-    id: string
-    seq: number
-    createdAt: number
-    updatedAt: number
-    active: boolean
-    activeAt: number
-    metadata: MachineMetadata | null
-    metadataVersion: number
-    runnerState: RunnerState | null
-    runnerStateVersion: number
-}
+export { AgentStateSchema, AttachmentMetadataSchema, MachineMetadataSchema, MetadataSchema, RunnerStateSchema }
 
 export const CliMessagesResponseSchema = z.object({
     messages: z.array(z.object({
@@ -131,18 +79,7 @@ export const CreateSessionResponseSchema = z.object({
 export type CreateSessionResponse = z.infer<typeof CreateSessionResponseSchema>
 
 export const CreateMachineResponseSchema = z.object({
-    machine: z.object({
-        id: z.string(),
-        seq: z.number(),
-        createdAt: z.number(),
-        updatedAt: z.number(),
-        active: z.boolean(),
-        activeAt: z.number(),
-        metadata: z.unknown().nullable(),
-        metadataVersion: z.number(),
-        runnerState: z.unknown().nullable(),
-        runnerStateVersion: z.number()
-    })
+    machine: MachineSchema
 })
 
 export type CreateMachineResponse = z.infer<typeof CreateMachineResponseSchema>

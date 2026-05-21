@@ -236,6 +236,26 @@ export const MachineMetadataSchema = z.object({
     workspaceRoots: z.array(z.string()).optional()
 })
 
+export type MachineMetadata = z.infer<typeof MachineMetadataSchema>
+
+export const RunnerStateSchema = z.object({
+    status: z.union([z.enum(['running', 'shutting-down']), z.string()]),
+    pid: z.number().optional(),
+    httpPort: z.number().optional(),
+    startedAt: z.number().optional(),
+    shutdownRequestedAt: z.number().optional(),
+    shutdownSource: z.union([z.enum(['mobile-app', 'cli', 'os-signal', 'unknown']), z.string()]).optional(),
+    lastSpawnError: z.object({
+        message: z.string(),
+        pid: z.number().optional(),
+        exitCode: z.number().nullable().optional(),
+        signal: z.string().nullable().optional(),
+        at: z.number()
+    }).nullable().optional()
+})
+
+export type RunnerState = z.infer<typeof RunnerStateSchema>
+
 export const MachineSchema = z.object({
     id: z.string(),
     namespace: z.string(),
@@ -246,7 +266,7 @@ export const MachineSchema = z.object({
     activeAt: z.number(),
     metadata: MachineMetadataSchema.nullable(),
     metadataVersion: z.number(),
-    runnerState: z.unknown().nullable(),
+    runnerState: RunnerStateSchema.nullable(),
     runnerStateVersion: z.number()
 })
 

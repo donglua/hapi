@@ -451,9 +451,7 @@ export class ApiMachineClient {
                     if (desiredWorkspaceRoots?.length) {
                         return { ...base, workspaceRoots: desiredWorkspaceRoots }
                     }
-                    const { workspaceRoot: _legacyWorkspaceRoot, workspaceRoots: _workspaceRoots, ...rest } = base as MachineMetadata & {
-                        workspaceRoot?: string
-                    }
+                    const { workspaceRoots: _workspaceRoots, ...rest } = base
                     return rest as MachineMetadata
                 }).then(() => {
                     console.log(`[HAPI] Workspace roots synced: ${formatWorkspaceRoots(this.machine.metadata?.workspaceRoots)}`)
