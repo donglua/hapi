@@ -11,6 +11,7 @@ import type {
     OpencodeModelsResponse,
     OpencodeModelSummary,
     PathExistsResponse,
+    SlashCommandsResponse,
     UploadFileResponse
 } from '@hapi/protocol/apiTypes'
 import type { Server } from 'socket.io'
@@ -212,16 +213,8 @@ export class RpcGateway {
         return await this.sessionRpc(sessionId, 'ripgrep', { args, cwd }) as RpcCommandResponse
     }
 
-    async listSlashCommands(sessionId: string, agent: string): Promise<{
-        success: boolean
-        commands?: Array<{ name: string; description?: string; source: 'builtin' | 'user' | 'plugin' | 'project' }>
-        error?: string
-    }> {
-        return await this.sessionRpc(sessionId, 'listSlashCommands', { agent }) as {
-            success: boolean
-            commands?: Array<{ name: string; description?: string; source: 'builtin' | 'user' | 'plugin' | 'project' }>
-            error?: string
-        }
+    async listSlashCommands(sessionId: string, agent: string): Promise<SlashCommandsResponse> {
+        return await this.sessionRpc(sessionId, 'listSlashCommands', { agent }) as SlashCommandsResponse
     }
 
     async listSkills(sessionId: string): Promise<{

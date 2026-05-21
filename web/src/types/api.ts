@@ -21,6 +21,8 @@ export type {
     OpencodeModelsResponse,
     OpencodeModelSummary,
     PathExistsResponse,
+    SlashCommand,
+    SlashCommandsResponse,
     UploadFileResponse
 } from '@hapi/protocol/apiTypes'
 
@@ -153,20 +155,6 @@ export type GitStatusFiles = {
     branch: string | null
     totalStaged: number
     totalUnstaged: number
-}
-
-export type SlashCommand = {
-    name: string
-    description?: string
-    source: 'builtin' | 'user' | 'plugin' | 'project'
-    content?: string  // Expanded content for Codex user prompts
-    pluginName?: string
-}
-
-export type SlashCommandsResponse = {
-    success: boolean
-    commands?: SlashCommand[]
-    error?: string
 }
 
 export type SkillSummary = {

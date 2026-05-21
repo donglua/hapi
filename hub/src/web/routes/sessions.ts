@@ -1,4 +1,5 @@
 import { getPermissionModesForFlavor, isPermissionModeAllowedForFlavor, supportsModelChange, toSessionSummary } from '@hapi/protocol'
+import type { SlashCommand } from '@hapi/protocol/apiTypes'
 import { CodexCollaborationModeSchema, PermissionModeSchema } from '@hapi/protocol/schemas'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -45,15 +46,6 @@ const uploadDeleteSchema = z.object({
 })
 
 const MAX_UPLOAD_BYTES = 50 * 1024 * 1024
-
-
-type SlashCommand = {
-    name: string
-    description?: string
-    source: 'builtin' | 'user' | 'plugin' | 'project'
-    content?: string
-    pluginName?: string
-}
 
 function commandsFromMetadataSlashCommands(names: readonly string[] | undefined): SlashCommand[] {
     if (!names?.length) {

@@ -93,3 +93,17 @@ export type OpencodeModelsResponse = {
 }
 
 export type ListOpencodeModelsResponse = OpencodeModelsResponse
+
+export type SlashCommand = {
+    name: string
+    description?: string
+    source: 'builtin' | 'user' | 'plugin' | 'project'
+    content?: string
+    pluginName?: string
+}
+
+export type SlashCommandsResponse = {
+    success: boolean
+    commands?: SlashCommand[]
+    error?: string
+}
